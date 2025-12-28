@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Navidad Supersónica 💙🎄</title>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#fbbf24">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { 
+  margin:0; 
+  background: linear-gradient(180deg, #0f172a 0%, #14532d 100%); 
+  color: #fef3c7; 
+  font-family: 'Courier New', monospace; 
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+#gameContainer { 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  gap: 15px;
+}
+
+h2 { 
+  font-size: clamp(18px, 5vw, 28px); 
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  margin-bottom: 10px;
+}
+
+#ui { 
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  font-size: clamp(12px, 3vw, 16px);
+  background: rgba(0,0,0,0.3);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,215,0,0.3);
+}
+
+#ui > div { 
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+#ui button {
+  padding: 8px 15px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: clamp(11px, 2.5vw, 14px);
+  font-weight: bold;
+  color: #000;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+
+#ui button:hover {
+  transform: scale(1.05);
+}
+
+#ui button:active {
+  transform: scale(0.95);
+}
+
+#canvasWrapper {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  aspect-ratio: 900 / 420;
+}
+
+#game { 
+  display: block; 
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #0b1220 0%, #1e3a8a 50%, #14532d 100%); 
+  border: 4px solid #fbbf24;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.modal { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(2,6,23,0.98); 
+  display: none; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  color: #fef3c7; 
+  z-index: 999; 
+  overflow-y: auto; 
+  padding: 20px;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.modal h2 { 
+  font-size: clamp(24px, 6vw, 36px); 
+  margin-bottom: 20px;
+  color: #fbbf24;
+}
+
+.modal p { 
+  font-size: clamp(14px, 3.5vw, 18px); 
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.modal button { 
+  margin: 10px 5px; 
+  padding: 12px 25px; 
+  font-size: clamp(14px, 3.5vw, 18px); 
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border: 2px solid #fbbf24;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  color: #000;
+  transition: all 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.modal button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.modal button:disabled { 
+  background: #666; 
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#loveMessage { 
+  position: fixed; 
+  top: 15px;  /* Cambiar de 50% a 15px para ponerlo arriba */
+  left: 50%; 
+  transform: translateX(-50%);  /* Solo centrar horizontalmente */
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: white; 
+  padding: 15px 25px;  /* Reducir padding para que sea más compacto */
+  border-radius: 15px; 
+  border: 3px solid #fbbf24; 
+  font-size: clamp(14px, 3.5vw, 18px);  /* Reducir tamaño */
+  font-weight: bold; 
+  display: none; 
+  z-index: 1000; 
+  text-align: center; 
+  box-shadow: 0 0 30px rgba(255,215,0,0.6); 
+  animation: slideDown 0.3s ease-out forwards;
+  max-width: 90%;
+}
+
+@keyframes slideDown { 
+  0% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+  100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+#earnedMessages { 
+  margin-top: 20px; 
+  max-width: 100%; 
+  width: 100%;
+}
+
+#earnedMessages h3 { 
+  color: #fbbf24; 
+  text-align: center; 
+  margin-bottom: 15px; 
+  font-size: clamp(16px, 4vw, 22px);
+}
+
+#earnedMessages .message { 
+  background: rgba(220,38,38,0.3); 
+  padding: 12px 16px; 
+  margin: 8px 0; 
+  border-radius: 10px; 
+  border-left: 4px solid #fbbf24;
+  font-size: clamp(13px, 3vw, 16px);
+  line-height: 1.4;
+}
+
+#earnedMessages .message.empty { 
+  text-align: center; 
+  color: #94a3b8; 
+  font-style: italic;
+  background: rgba(100,100,100,0.2);
+}
+
+.powerup-shop { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+  gap: 15px; 
+  margin: 20px 0; 
+  width: 100%;
+}
+
+.powerup-item { 
+  background: rgba(59,130,246,0.2); 
+  padding: 15px; 
+  border-radius: 12px; 
+  border: 3px solid #3b82f6; 
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.powerup-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(59,130,246,0.4);
+}
+
+.powerup-item.active { 
+  border-color: #fbbf24; 
+  background: rgba(255,215,0,0.2);
+}
+
+.powerup-item h4 { 
+  color: #60a5fa; 
+  font-size: clamp(14px, 3vw, 18px); 
+  margin-bottom: 8px;
+}
+
+.powerup-item p { 
+  font-size: clamp(12px, 2.5vw, 14px); 
+  margin: 5px 0;
+}
+
+.powerup-item button { 
+  padding: 8px 16px; 
+  font-size: clamp(12px, 2.5vw, 14px); 
+  margin-top: 10px;
+  width: 100%;
+}
+
+.achievements { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+  gap: 12px; 
+  width: 100%; 
+  margin: 15px 0;
+}
+
+.achievement { 
+  background: rgba(100,100,100,0.3); 
+  padding: 15px; 
+  border-radius: 10px; 
+  border: 3px solid #666;
+  transition: all 0.2s;
+}
+
+.achievement.unlocked { 
+  background: rgba(34,197,94,0.3); 
+  border-color: #22c55e;
+  box-shadow: 0 0 15px rgba(34,197,94,0.4);
+}
+
+.achievement h4 { 
+  font-size: clamp(13px, 3vw, 16px); 
+  color: #fbbf24; 
+  margin-bottom: 8px;
+}
+
+.achievement p { 
+  font-size: clamp(11px, 2.5vw, 13px);
+  line-height: 1.4;
+}
+
+.leaderboard { 
+  width: 100%; 
+  margin: 15px 0;
+}
+
+.leaderboard-entry { 
+  background: rgba(59,130,246,0.2); 
+  padding: 12px 16px; 
+  margin: 8px 0; 
+  border-radius: 8px; 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: clamp(12px, 3vw, 15px);
+  border: 2px solid rgba(59,130,246,0.4);
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.leaderboard-entry.top3 { 
+  background: rgba(255,215,0,0.3); 
+  border: 3px solid #fbbf24;
+  box-shadow: 0 0 15px rgba(255,215,0,0.3);
+}
+
+.tab-buttons { 
+  display: flex; 
+  justify-content: center; 
+  gap: 10px; 
+  margin: 20px 0; 
+  flex-wrap: wrap;
+}
+
+.tab-buttons button { 
+  background: rgba(59,130,246,0.6); 
+  color: white;
+  border: 2px solid #3b82f6;
+}
+
+.tab-buttons button.active { 
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #000;
+  border-color: #fbbf24;
+}
+
+.mode-select { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+  gap: 15px; 
+  margin: 20px 0; 
+  width: 100%;
+}
+
+.mode-btn { 
+  padding: 20px 15px; 
+  background: rgba(59,130,246,0.3); 
+  border: 3px solid #3b82f6; 
+  border-radius: 12px; 
+  cursor: pointer; 
+  font-size: clamp(13px, 3vw, 16px); 
+  color: #fef3c7; 
+  font-weight: bold;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.mode-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(59,130,246,0.4);
+}
+
+.mode-btn.selected { 
+  border-color: #fbbf24; 
+  background: rgba(255,215,0,0.2);
+  box-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.mode-btn small {
+  display: block;
+  margin-top: 5px;
+  font-size: clamp(10px, 2vw, 12px);
+  opacity: 0.8;
+}
+
+#particleCanvas { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  pointer-events: none; 
+  z-index: 997;
+  width: 100vw;
+  height: 100vh;
+}
+
+#powerupBar { 
+  display: flex; 
+  gap: 8px; 
+  position: fixed; 
+  top: 15px; 
+  right: 15px; 
+  z-index: 900;
+}
+
+.powerup-icon { 
+  background: rgba(0,0,0,0.8); 
+  padding: 10px; 
+  border-radius: 10px; 
+  font-size: 24px; 
+  border: 3px solid #fbbf24; 
+  min-width: 45px; 
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.daily-mission { 
+  background: rgba(147,51,234,0.2); 
+  border: 3px solid #9333ea; 
+  padding: 15px; 
+  border-radius: 10px; 
+  margin: 12px 0; 
+  width: 100%;
+}
+
+.daily-mission h4 { 
+  color: #c084fc; 
+  margin-bottom: 8px; 
+  font-size: clamp(14px, 3vw, 17px);
+}
+
+.daily-mission p { 
+  font-size: clamp(12px, 2.5vw, 14px);
+  margin: 5px 0;
+}
+
+.daily-mission.completed { 
+  background: rgba(34,197,94,0.2); 
+  border-color: #22c55e;
+}
+
+.skin-selector { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+  gap: 15px; 
+  margin: 20px 0; 
+  width: 100%;
+}
+
+.skin-item { 
+  background: rgba(59,130,246,0.2); 
+  padding: 20px 15px; 
+  border-radius: 12px; 
+  border: 3px solid #3b82f6; 
+  cursor: pointer; 
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.skin-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(59,130,246,0.4);
+}
+
+.skin-item.selected { 
+  border-color: #fbbf24; 
+  background: rgba(255,215,0,0.2);
+  box-shadow: 0 0 20px rgba(255,215,0,0.4);
+}
+
+.skin-item.locked { 
+  opacity: 0.5; 
+  cursor: not-allowed;
+}
+
+.skin-item.locked:hover {
+  transform: none;
+}
+
+.skin-icon { 
+  font-size: clamp(32px, 8vw, 48px); 
+  margin-bottom: 10px;
+}
+
+.skin-name { 
+  font-size: clamp(12px, 2.5vw, 14px); 
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.skin-cost { 
+  font-size: clamp(11px, 2vw, 13px); 
+  color: #fbbf24; 
+  margin-top: 5px;
+}
+
+.tab-content {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  #ui {
+    font-size: 12px;
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  
+  .modal-content {
+    padding: 15px;
+  }
+  
+  #powerupBar {
+    top: 10px;
+    right: 10px;
+    gap: 5px;
+  }
+  
+  .powerup-icon {
+    font-size: 20px;
+    padding: 8px;
+    min-width: 38px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="gameContainer">
+  <h2>🎄 Velocidad Supersónica del Amor 🎄</h2>
+
+  <div id="ui">
+    <div>⭐ Anillos: <span id="rings">0</span></div>
+    <div>💰 Total: <span id="totalRings">0</span></div>
+    <div>📏 Distancia: <span id="distance">0</span> m</div>
+    <div>🏆 Récord: <span id="record">0</span></div>
+    <div><button onclick="openShop()">🛒 Tienda</button></div>
+  </div>
+
+  <div id="canvasWrapper">
+    <canvas id="game" width="900" height="420"></canvas>
+  </div>
+</div>
+
+<canvas id="particleCanvas"></canvas>
+<div id="powerupBar"></div>
+
+<div id="loveMessage"></div>
+
+<!-- GAME OVER -->
+<div id="gameOver" class="modal">
+  <div class="modal-content">
+    <h2>❄️ Fin del recorrido</h2>
+    <p>⭐ Anillos recogidos: <span id="finalRings"></span></p>
+    <p>📏 Distancia: <span id="finalDistance"></span> m</p>
+    <p id="newRecord" style="color:#fbbf24; font-weight:bold;"></p>
+    <p id="achievementUnlock" style="color:#22c55e; font-weight:bold;"></p>
+    
+    <div id="earnedMessages">
+      <h3>💌 Mensajes de Amor Desbloqueados</h3>
+      <div id="messagesList"></div>
+    </div>
+    
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:20px;">
+      <button onclick="restart()">🎮 Jugar de nuevo</button>
+      <button onclick="showMenu()">📊 Menú Principal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU PRINCIPAL -->
+<div id="mainMenu" class="modal active">
+  <div class="modal-content">
+    <h2>🎄 Navidad Supersónica 💙</h2>
+    
+    <div class="tab-buttons">
+      <button class="active" onclick="showTab('play')">🎮 Jugar</button>
+      <button onclick="showTab('achievements')">🏆 Logros</button>
+      <button onclick="showTab('leaderboard')">📊 Récords</button>
+      <button onclick="showTab('missions')">📋 Misiones</button>
+      <button onclick="showTab('skins')">👤 Personajes</button>
+    </div>
+    
+    <!-- TAB JUGAR -->
+    <div id="tabPlay" class="tab-content">
+      <h3 style="color:#fbbf24; margin:20px 0; text-align:center;">Selecciona modo de juego:</h3>
+      <div class="mode-select">
+        <div class="mode-btn selected" onclick="selectMode('normal')">
+          <div>🎮 NORMAL</div>
+          <small>Modo clásico</small>
+        </div>
+        <div class="mode-btn" onclick="selectMode('zen')">
+          <div>🧘 ZEN</div>
+          <small>Solo anillos</small>
+        </div>
+        <div class="mode-btn" onclick="selectMode('hardcore')">
+          <div>💀 HARDCORE</div>
+          <small>Máxima dificultad</small>
+        </div>
+        <div class="mode-btn" onclick="selectMode('timed')">
+          <div>⏱️ CONTRARRELOJ</div>
+          <small>5000m en 60s</small>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:25px;">
+        <button onclick="startGame()" style="font-size:clamp(16px, 4vw, 22px); padding:18px 40px;">▶️ COMENZAR</button>
+      </div>
+    </div>
+    
+    <!-- TAB LOGROS -->
+    <div id="tabAchievements" class="tab-content" style="display:none;">
+      <h3 style="color:#fbbf24; margin:20px 0; text-align:center;">🏆 Logros Desbloqueados</h3>
+      <div id="achievementsList" class="achievements"></div>
+    </div>
+    
+    <!-- TAB LEADERBOARD -->
+    <div id="tabLeaderboard" class="tab-content" style="display:none;">
+      <h3 style="color:#fbbf24; margin:20px 0; text-align:center;">📊 Top 10 Récords</h3>
+      <div id="leaderboardList" class="leaderboard"></div>
+    </div>
+    
+    <!-- TAB MISIONES -->
+    <div id="tabMissions" class="tab-content" style="display:none;">
+      <h3 style="color:#fbbf24; margin:20px 0; text-align:center;">📋 Misiones Diarias</h3>
+      <div id="missionsList"></div>
+    </div>
+    
+    <!-- TAB SKINS -->
+    <div id="tabSkins" class="tab-content" style="display:none;">
+      <h3 style="color:#fbbf24; margin:20px 0; text-align:center;">👤 Personajes Disponibles</h3>
+      <p style="margin:15px 0; text-align:center; font-size:clamp(14px, 3vw, 18px);">💰 Anillos totales: <span id="totalRingsDisplay">0</span></p>
+      <div id="skinsList" class="skin-selector"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIENDA -->
+<div id="shopMenu" class="modal">
+  <div class="modal-content">
+    <h2>🛒 Tienda de Power-ups</h2>
+    <p style="text-align:center; font-size:clamp(16px, 4vw, 20px); margin:15px 0;">💰 Anillos disponibles: <span id="shopRings">0</span></p>
+    
+    <div class="powerup-shop">
+      <div class="powerup-item" id="powerup-shield">
+        <h4>🛡️ Escudo</h4>
+        <p>Protege de 1 golpe</p>
+        <p style="color:#fbbf24; font-weight:bold;">💰 10 anillos</p>
+        <button onclick="buyPowerup('shield', 10)">Comprar</button>
+      </div>
+      <div class="powerup-item" id="powerup-speed">
+        <h4>⚡ Super Velocidad</h4>
+        <p>Velocidad x2 (10s)</p>
+        <p style="color:#fbbf24; font-weight:bold;">💰 15 anillos</p>
+        <button onclick="buyPowerup('speed', 15)">Comprar</button>
+      </div>
+      <div class="powerup-item" id="powerup-magnet">
+        <h4>🧲 Imán</h4>
+        <p>Atrae anillos (15s)</p>
+        <p style="color:#fbbf24; font-weight:bold;">💰 20 anillos</p>
+        <button onclick="buyPowerup('magnet', 20)">Comprar</button>
+      </div>
+      <div class="powerup-item" id="powerup-doublejump">
+        <h4>🦘 Salto Doble</h4>
+        <p>Salta en el aire</p>
+        <p style="color:#fbbf24; font-weight:bold;">💰 25 anillos</p>
+        <button onclick="buyPowerup('doublejump', 25)">Comprar</button>
+      </div>
+      <div class="powerup-item" id="powerup-revive">
+        <h4>💚 Revivir</h4>
+        <p>Segunda oportunidad</p>
+        <p style="color:#fbbf24; font-weight:bold;">💰 30 anillos</p>
+        <button onclick="buyPowerup('revive', 30)">Comprar</button>
+      </div>
+    </div>
+    
+    <div style="text-align:center; margin-top:20px;">
+      <button onclick="closeShop()">Cerrar Tienda</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const particleCanvas = document.getElementById("particleCanvas");
+const particleCtx = particleCanvas.getContext("2d");
+
+// Mantener dimensiones fijas del canvas
+canvas.width = 900;
+canvas.height = 420;
+
+// Ajustar canvas de partículas
+function resizeCanvas() {
+  particleCanvas.width = window.innerWidth;
+  particleCanvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Referencias DOM
+const ringsEl = document.getElementById("rings");
+const totalRingsEl = document.getElementById("totalRings");
+const distEl = document.getElementById("distance");
+const recordEl = document.getElementById("record");
+const gameOverScreen = document.getElementById("gameOver");
+const mainMenuScreen = document.getElementById("mainMenu");
+const shopMenuScreen = document.getElementById("shopMenu");
+const finalRings = document.getElementById("finalRings");
+const finalDistance = document.getElementById("finalDistance");
+const newRecordText = document.getElementById("newRecord");
+const loveMessageEl = document.getElementById("loveMessage");
+const messagesListEl = document.getElementById("messagesList");
+const achievementUnlockEl = document.getElementById("achievementUnlock");
+const powerupBarEl = document.getElementById("powerupBar");
+
+// Variables del juego
+const player = { x:140, y:260, vy:0, grounded:true, radius:25, canDoubleJump:false, hasJumped:false };
+const gravity = 0.6;
+const jumpForce = -13;
+const groundY = 340;
+
+let speed, rings, distance, record, entities, running, startTime;
+let snowflakes = [], particles = [];
+let lastSpawnTime = 0;
+let minSpawnInterval = 1500;
+let maxSpawnInterval = 2500;
+let shownMilestones = new Set();
+let earnedMessages = [];
+let gameMode = 'normal';
+let timeLimit = 0;
+
+// Sistema de guardado
+let gameData = {
+  totalRings: 0,
+  record: 0,
+  achievements: {},
+  leaderboard: [],
+  powerups: {},
+  activePowerups: [],
+  dailyMissions: [],
+  lastMissionDate: '',
+  selectedSkin: 'sonic',
+  unlockedSkins: ['sonic']
+};
+
+// Cargar datos
+function loadGame() {
+  const saved = localStorage.getItem('sonicGameData');
+  if(saved) {
+    gameData = {...gameData, ...JSON.parse(saved)};
+  }
+  totalRingsEl.textContent = gameData.totalRings;
+  recordEl.textContent = gameData.record;
+  record = gameData.record;
+
+ const savedMilestones = localStorage.getItem('sonicShownMilestones');
+  if(savedMilestones) {
+    const milestonesArray = JSON.parse(savedMilestones);
+    shownMilestones = new Set(milestonesArray);
+  }
+}
+
+function saveGame() {
+  localStorage.setItem('sonicGameData', JSON.stringify(gameData));
+}
+
+// Mensajes de amor
+const loveMessages = {
+  500: "💙 ¡500m! Cada paso contigo es una aventura",
+  1000: "❤️ ¡1000m! Tu amor me da fuerzas para seguir",
+  1500: "💖 ¡1500m! Eres mi motivación diaria",
+  2000: "💕 ¡2000m! Contigo todo es posible",
+  2500: "💝 ¡2500m! Mi corazón late más rápido por ti",
+  3000: "💗 ¡3000m! Eres la razón de mi felicidad",
+  4000: "💓 ¡4000m! Tu sonrisa ilumina mi camino",
+  5000: "💞 ¡5000m! Cada momento contigo es especial",
+  6000: "💘 ¡6000m! Eres mi mundo entero",
+  7000: "🌟 ¡7000m! TE AMO más que a nada",
+  10000: "💖 ¡10,000m! Eres mi sueño hecho realidad",
+  15000: "🎄 ¡15,000m! Esta Navidad y todas contigo",
+  20000: "💗 ¡20,000m! Tu amor es mi superpoder",
+  30000: "💞 ¡30,000m! Eres mi persona favorita",
+  50000: "❤️ ¡50,000m! Eres mi compañera perfecta",
+  75000: "🌟 ¡75,000m! INCREÍBLE! Eres mi inspiración",
+  100000: "💗 ¡100,000m! Cien mil metros de amor puro",
+  200000: "👑 ¡200,000m! LEGENDARIO!",
+  500000: "🌟 ¡500,000m! MEDIO MILLÓN! Eres mi universo",
+  1000000: "👑💎 ¡UN MILLÓN! TE AMO INFINITAMENTE 💎👑"
+};
+
+// Logros
+const achievements = {
+  firstLove: { name: "Primer Amor", desc: "Alcanza 500m", target: 500, type: 'distance', icon: "💙", unlocked: false },
+  passionate: { name: "Corredor Apasionado", desc: "Alcanza 10,000m", target: 10000, type: 'distance', icon: "🏃", unlocked: false },
+  collector: { name: "Coleccionista", desc: "100 anillos en 1 partida", target: 100, type: 'rings', icon: "⭐", unlocked: false },
+  invincible: { name: "Invencible", desc: "Alcanza 50,000m", target: 50000, type: 'distance', icon: "🛡️", unlocked: false },
+  eternal: { name: "Amor Eterno", desc: "Alcanza 1,000,000m", target: 1000000, type: 'distance', icon: "👑", unlocked: false },
+  speedster: { name: "Velocista", desc: "Alcanza 25,000m", target: 25000, type: 'distance', icon: "⚡", unlocked: false },
+  ringMaster: { name: "Maestro de Anillos", desc: "500 anillos totales", target: 500, type: 'totalRings', icon: "💍", unlocked: false },
+  dedicated: { name: "Dedicado", desc: "Completa 10 misiones", target: 10, type: 'missions', icon: "📋", unlocked: false }
+};
+
+// Skins
+const skins = {
+  sonic: { name: "Sonic Clásico", cost: 0, icon: "💙", color: "#1e3a8a", unlocked: true },
+  shadow: { name: "Shadow", cost: 500, icon: "🖤", color: "#1f1f1f", unlocked: false },
+  tails: { name: "Tails", cost: 750, icon: "🧡", color: "#fb923c", unlocked: false },
+  knuckles: { name: "Knuckles", cost: 1000, icon: "❤️", color: "#dc2626", unlocked: false },
+  amy: { name: "Amy Rose", cost: 1250, icon: "💗", color: "#ec4899", unlocked: false },
+  silver: { name: "Silver", cost: 1500, icon: "🤍", color: "#cbd5e1", unlocked: false }
+};
+
+// Misiones diarias
+function generateDailyMissions() {
+  const today = new Date().toDateString();
+  if(gameData.lastMissionDate !== today) {
+    gameData.dailyMissions = [
+      { id: 1, desc: "Recoge 50 anillos", target: 50, progress: 0, type: 'rings', reward: 20, completed: false },
+      { id: 2, desc: "Alcanza 5000m", target: 5000, progress: 0, type: 'distance', reward: 30, completed: false },
+      { id: 3, desc: "Completa 3 partidas", target: 3, progress: 0, type: 'games', reward: 15, completed: false }
+    ];
+    gameData.lastMissionDate = today;
+    saveGame();
+  }
+}
+
+// Controles
+let keys = {};
+document.addEventListener("keydown", e=>{
+  keys[e.key]=true;
+  if((e.key === " " || e.key === "ArrowUp" || e.key === "w") && running) {
+    e.preventDefault();
+    handleJump();
+  }
+});
+document.addEventListener("keyup", e=>keys[e.key]=false);
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  if(running) handleJump();
+});
+
+canvas.addEventListener('click', (e) => {
+  if(running) handleJump();
+});
+
+function handleJump() {
+  if(!running) return;
+  
+  const hasDoubleJump = gameData.activePowerups.includes('doublejump');
+  
+  if(player.grounded) {
+    player.vy = jumpForce;
+    player.grounded = false;
+    player.hasJumped = true;
+    player.canDoubleJump = hasDoubleJump;
+  } else if(player.canDoubleJump && !player.grounded) {
+    player.vy = jumpForce;
+    player.canDoubleJump = false;
+    createParticles(player.x, player.y, "#60a5fa", 10);
+  }
+}
+
+// Sistema de partículas
+function createParticles(x, y, color, count) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width / canvas.width;
+  const scaleY = rect.height / canvas.height;
+  const screenX = rect.left + (x * scaleX);
+  const screenY = rect.top + (y * scaleY);
+  
+  for(let i=0; i<count; i++) {
+    particles.push({
+      x: screenX, 
+      y: screenY,
+      vx: (Math.random()-0.5)*4,
+      vy: (Math.random()-0.5)*4,
+      life: 1,
+      color
+    });
+  }
+}
+
+function updateParticles() {
+  particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+  particles = particles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.02;
+    p.vy += 0.1;
+    
+    if(p.life > 0) {
+      particleCtx.globalAlpha = p.life;
+      particleCtx.fillStyle = p.color;
+      particleCtx.beginPath();
+      particleCtx.arc(p.x, p.y, 3, 0, Math.PI*2);
+      particleCtx.fill();
+      return true;
+    }
+    return false;
+  });
+  particleCtx.globalAlpha = 1;
+}
+
+// Funciones de visualización
+function showLoveMessage(dist){
+  const milestone = Object.keys(loveMessages).find(m => Math.floor(dist) >= m && !shownMilestones.has(m));
+  if(milestone){
+    shownMilestones.add(milestone);
+    earnedMessages.push({milestone, message: loveMessages[milestone]});
+    loveMessageEl.textContent = loveMessages[milestone];
+    loveMessageEl.style.display = "block";
+    setTimeout(()=> loveMessageEl.style.display = "none", 3000);
+    
+    // Guardar milestones mostrados en localStorage
+    const shownArray = Array.from(shownMilestones);
+    localStorage.setItem('sonicShownMilestones', JSON.stringify(shownArray));
+  }
+}
+
+function displayEarnedMessages(){
+  if(earnedMessages.length === 0){
+    messagesListEl.innerHTML = '<div class="message empty">No desbloqueaste mensajes. ¡Alcanza los 500m!</div>';
+  } else {
+    messagesListEl.innerHTML = earnedMessages.map(msg => 
+      `<div class="message">${msg.message}</div>`
+    ).join('');
+  }
+}
+
+function checkAchievements() {
+  let newUnlocks = [];
+  Object.keys(achievements).forEach(key => {
+    const ach = achievements[key];
+    if(!gameData.achievements[key]) {
+      let achieved = false;
+      if(ach.type === 'distance' && distance >= ach.target) achieved = true;
+      if(ach.type === 'rings' && rings >= ach.target) achieved = true;
+      if(ach.type === 'totalRings' && gameData.totalRings >= ach.target) achieved = true;
+      
+      if(achieved) {
+        gameData.achievements[key] = true;
+        newUnlocks.push(ach.name);
+        gameData.totalRings += 50;
+      }
+    }
+  });
+  
+  if(newUnlocks.length > 0) {
+    achievementUnlockEl.textContent = `🏆 ¡Logro desbloqueado! ${newUnlocks.join(', ')} (+50 anillos)`;
+  } else {
+    achievementUnlockEl.textContent = '';
+  }
+}
+
+function updatePowerupBar() {
+  powerupBarEl.innerHTML = gameData.activePowerups.map(p => {
+    const icons = {shield: '🛡️', speed: '⚡', magnet: '🧲', doublejump: '🦘', revive: '💚'};
+    return `<div class="powerup-icon">${icons[p]}</div>`;
+  }).join('');
+}
+
+function initSnowflakes(){
+  snowflakes=[];
+  for(let i=0;i<50;i++){
+    snowflakes.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:2+Math.random()*2});
+  }
+}
+
+function drawGround(){
+  let groundColor = "#ffffff";
+  if(distance > 50000) groundColor = "#e0e7ff";
+  if(distance > 100000) groundColor = "#ddd6fe";
+  
+  ctx.fillStyle=groundColor;
+  ctx.fillRect(0,groundY,canvas.width,80);
+  
+  // Líneas decorativas
+  ctx.strokeStyle = "rgba(255,215,0,0.3)";
+  ctx.lineWidth = 2;
+  for(let i=0; i<canvas.width; i+=30) {
+    ctx.beginPath();
+    ctx.moveTo(i, groundY);
+    ctx.lineTo(i+15, groundY+80);
+    ctx.stroke();
+  }
+}
+
+function drawSnowflakes(){
+  ctx.fillStyle="rgba(255,255,255,0.8)";
+  ctx.shadowBlur = 5;
+  ctx.shadowColor = "white";
+  snowflakes.forEach(s=>{
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fill();
+    s.y += 1;
+    s.x += Math.sin(s.y/50) * 0.5;
+    if(s.y>canvas.height){ 
+      s.y=0; 
+      s.x=Math.random()*canvas.width; 
+    }
+  });
+  ctx.shadowBlur = 0;
+}
+
+function drawPlayer(){
+  const time = Date.now() / 100;
+  const skinData = skins[gameData.selectedSkin];
+  const color = skinData ? skinData.color : "#1e3a8a";
+  
+  // Bola principal
+  ctx.fillStyle = color;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = color;
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Efecto de rotación
+  ctx.strokeStyle = color === "#1f1f1f" ? "#ef4444" : "#60a5fa";
+  ctx.lineWidth = 3;
+  for(let i=0; i<3; i++){
+    const angle = (time + i*2) % 6.28;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius-5, angle, angle+1.5);
+    ctx.stroke();
+  }
+
+  // Highlight
+  ctx.fillStyle = "rgba(255,255,255,0.4)";
+  ctx.beginPath();
+  ctx.arc(player.x-8, player.y-8, 8, 0, Math.PI*2);
+  ctx.fill();
+
+  // Estela de velocidad
+  if(!player.grounded){
+    ctx.fillStyle = color === "#1f1f1f" ? "rgba(239,68,68,0.3)" : "rgba(59,130,246,0.3)";
+    for(let i=1; i<=3; i++){
+      ctx.beginPath();
+      ctx.arc(player.x-i*10, player.y, player.radius-i*3, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+  
+  // Efecto escudo
+  if(gameData.activePowerups.includes('shield')) {
+    ctx.strokeStyle = "rgba(59,130,246,0.8)";
+    ctx.lineWidth = 4;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#3b82f6";
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius+10 + Math.sin(time)*2, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+}
+
+function spawnEntity(){
+  const elapsed = (Date.now()-startTime)/1000;
+  if(elapsed < 3) return;
+  
+  if(gameMode === 'zen') {
+    const y = groundY - 60 - Math.random()*60;
+    entities.push({ type:"ring", x:canvas.width+40, y });
+    return;
+  }
+  
+  const obstacleChance = gameMode === 'hardcore' ? 0.8 : 0.7;
+  const isRing = Math.random() > obstacleChance;
+
+  if(isRing){
+    const y = groundY - 60 - Math.random()*60;
+    entities.push({ type:"ring", x:canvas.width+40, y });
+  } else {
+    const obstacleHeight = 30 + Math.floor(Math.random() * 3) * 10;
+    entities.push({ type:"obstacle", x:canvas.width+40, y:groundY-obstacleHeight, w:35, h:obstacleHeight });
+  }
+}
+
+function drawEntities(){
+  const hasMagnet = gameData.activePowerups.includes('magnet');
+  
+  entities.forEach(e=>{
+    if(e.type==="ring"){
+      if(hasMagnet) {
+        const dx = player.x - e.x;
+        const dy = player.y - e.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 150) {
+          e.x += dx * 0.1;
+          e.y += dy * 0.1;
+        }
+      }
+      
+      // Anillo con brillo
+      ctx.strokeStyle="#fbbf24"; 
+      ctx.lineWidth=4;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "gold";
+      ctx.beginPath(); 
+      ctx.arc(e.x,e.y,10,0,Math.PI*2); 
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      
+      ctx.fillStyle="rgba(255,215,0,0.2)";
+      ctx.beginPath();
+      ctx.arc(e.x,e.y,12,0,Math.PI*2);
+      ctx.fill();
+    }else{
+      // Obstáculo mejorado
+      ctx.fillStyle="#991b1b";
+      ctx.shadowBlur = 5;
+      ctx.shadowColor = "#991b1b";
+      ctx.fillRect(e.x,e.y,e.w,e.h);
+      ctx.shadowBlur = 0;
+      
+      ctx.fillStyle="#16a34a";
+      ctx.fillRect(e.x+8,e.y,e.w-16,e.h);
+      
+      // Espinas
+      ctx.fillStyle="#991b1b";
+      for(let i=0; i<e.w; i+=10) {
+        ctx.beginPath();
+        ctx.moveTo(e.x+i, e.y);
+        ctx.lineTo(e.x+i+5, e.y-8);
+        ctx.lineTo(e.x+i+10, e.y);
+        ctx.fill();
+      }
+    }
+    e.x -= speed;
+  });
+}
+
+function hitbox(){ 
+  return { 
+    x:player.x-player.radius, 
+    y:player.y-player.radius, 
+    w:player.radius*2, 
+    h:player.radius*2 
+  }; 
+}
+
+function collide(a,b){ 
+  return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y; 
+}
+
+function endGame(canRevive = true){
+  if(canRevive && gameData.activePowerups.includes('revive')) {
+    gameData.activePowerups = gameData.activePowerups.filter(p => p !== 'revive');
+    updatePowerupBar();
+    saveGame();
+    createParticles(player.x, player.y, "#22c55e", 20);
+    return;
+  }
+  
+  running=false;
+  gameOverScreen.classList.add('active');
+  finalRings.textContent=rings;
+  finalDistance.textContent=Math.floor(distance);
+  
+  gameData.totalRings += rings;
+  totalRingsEl.textContent = gameData.totalRings;
+  
+  gameData.dailyMissions.forEach(m => {
+    if(m.type === 'rings') m.progress += rings;
+    if(m.type === 'distance') m.progress = Math.max(m.progress, Math.floor(distance));
+    if(m.type === 'games') m.progress += 1;
+    if(m.progress >= m.target && !m.completed) {
+      m.completed = true;
+      gameData.totalRings += m.reward;
+    }
+  });
+  
+  checkAchievements();
+  displayEarnedMessages();
+  
+  if(distance > 0) {
+    gameData.leaderboard.push({
+      distance: Math.floor(distance),
+      rings: rings,
+      date: new Date().toLocaleDateString(),
+      mode: gameMode
+    });
+    gameData.leaderboard.sort((a,b) => b.distance - a.distance);
+    gameData.leaderboard = gameData.leaderboard.slice(0,10);
+  }
+  
+  if(distance>record){
+    gameData.record = Math.floor(distance);
+    recordEl.textContent=Math.floor(distance);
+    newRecordText.textContent="🏆 ¡Nuevo récord!";
+  }else {
+    newRecordText.textContent="";
+  }
+  
+  saveGame();
+}
+
+function update(){
+  if(!running) return;
+  
+  // Limpiar canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Dibujar fondo y elementos
+  drawSnowflakes();
+  drawGround();
+
+  let currentSpeed = speed;
+  if(gameData.activePowerups.includes('speed')) currentSpeed *= 2;
+  
+  distance+=currentSpeed/10;
+  distEl.textContent=Math.floor(distance);
+  
+  if(gameMode === 'timed') {
+    const elapsed = (Date.now() - startTime) / 1000;
+    if(elapsed > timeLimit) {
+      if(distance >= 5000) {
+        loveMessageEl.textContent = "🎉 ¡MISIÓN CUMPLIDA! +100 anillos";
+        loveMessageEl.style.display = "block";
+        setTimeout(()=> loveMessageEl.style.display = "none", 3000);
+        gameData.totalRings += 100;
+      }
+      endGame(false);
+      return;
+    }
+  }
+  
+  showLoveMessage(distance);
+  updateParticles();
+  
+  const now = Date.now();
+  const elapsed = (now - startTime) / 1000;
+  
+  if(elapsed >= 3 && now - lastSpawnTime > minSpawnInterval){
+    const randomInterval = minSpawnInterval + Math.random() * (maxSpawnInterval - minSpawnInterval);
+    if(now - lastSpawnTime > randomInterval){
+      spawnEntity();
+      lastSpawnTime = now;
+    }
+  }
+
+  player.vy+=gravity;
+  player.y+=player.vy;
+
+  if(player.y+player.radius>=groundY){ 
+    player.y=groundY-player.radius; 
+    player.vy=0; 
+    player.grounded=true;
+    player.hasJumped = false;
+  }
+
+  drawEntities();
+  drawPlayer();
+
+  entities=entities.filter(e=>{
+    if(e.type==="ring"){
+      const hb=hitbox();
+      if(e.x>hb.x-20 && e.x<hb.x+hb.w+20 && e.y>hb.y-20 && e.y<hb.y+hb.h+20){
+        rings++; 
+        ringsEl.textContent=rings;
+        createParticles(e.x, e.y, "gold", 8);
+        return false;
+      }
+    }else if(collide(hitbox(),e)){ 
+      if(gameData.activePowerups.includes('shield')) {
+        gameData.activePowerups = gameData.activePowerups.filter(p => p !== 'shield');
+        updatePowerupBar();
+        createParticles(e.x, e.y, "#3b82f6", 15);
+        return false;
+      }
+      endGame(); 
+      return false; 
+    }
+    return e.x>-50;
+  });
+
+  requestAnimationFrame(update);
+}
+
+// UI y menús
+function showMenu() {
+  gameOverScreen.classList.remove('active');
+  mainMenuScreen.classList.add('active');
+  updateAchievementsList();
+  updateLeaderboard();
+  updateMissionsList();
+  updateSkinsList();
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab-buttons button').forEach(b => b.classList.remove('active'));
+  
+  const tabId = 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1);
+  const tabElement = document.getElementById(tabId);
+  if(tabElement) {
+    tabElement.style.display = 'block';
+  }
+  
+  event.target.classList.add('active');
+}
+
+function selectMode(mode) {
+  gameMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+function startGame() {
+  mainMenuScreen.classList.remove('active');
+  restart();
+}
+
+function updateAchievementsList() {
+  const list = document.getElementById('achievementsList');
+  list.innerHTML = Object.keys(achievements).map(key => {
+    const ach = achievements[key];
+    const unlocked = gameData.achievements[key];
+    return `
+      <div class="achievement ${unlocked ? 'unlocked' : ''}">
+        <h4>${ach.icon} ${ach.name}</h4>
+        <p>${ach.desc}</p>
+        <p style="font-size:clamp(10px, 2vw, 12px); color:#fbbf24; margin-top:5px;">${unlocked ? '✓ Completado' : '🔒 Bloqueado'}</p>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  if(gameData.leaderboard.length === 0) {
+    list.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px;">No hay récords aún. ¡Sé el primero!</p>';
+  } else {
+    list.innerHTML = gameData.leaderboard.map((entry, i) => `
+      <div class="leaderboard-entry ${i<3 ? 'top3' : ''}">
+        <span><strong>#${i+1}</strong> ${entry.distance}m (${entry.rings}⭐)</span>
+        <span style="font-size:clamp(10px, 2.5vw, 12px); opacity:0.8;">${entry.date} • ${entry.mode.toUpperCase()}</span>
+      </div>
+    `).join('');
+  }
+}
+
+function updateMissionsList() {
+  const list = document.getElementById('missionsList');
+  list.innerHTML = gameData.dailyMissions.map(m => `
+    <div class="daily-mission ${m.completed ? 'completed' : ''}">
+      <h4>${m.desc}</h4>
+      <p>Progreso: <strong>${m.progress}/${m.target}</strong></p>
+      <p style="color:#fbbf24; margin-top:5px;">Recompensa: ${m.reward} anillos ${m.completed ? '✓' : ''}</p>
+    </div>
+  `).join('');
+}
+
+function updateSkinsList() {
+  const list = document.getElementById('skinsList');
+  document.getElementById('totalRingsDisplay').textContent = gameData.totalRings;
+  
+  list.innerHTML = Object.keys(skins).map(key => {
+    const skin = skins[key];
+    const unlocked = gameData.unlockedSkins.includes(key);
+    const selected = gameData.selectedSkin === key;
+    
+    return `
+      <div class="skin-item ${selected ? 'selected' : ''} ${!unlocked ? 'locked' : ''}" 
+           onclick="${unlocked ? `selectSkin('${key}')` : `buySkin('${key}', ${skin.cost})`}">
+        <div class="skin-icon">${skin.icon}</div>
+        <div class="skin-name">${skin.name}</div>
+        <div class="skin-cost">${unlocked ? (selected ? '✓ Equipado' : 'Click para usar') : `💰 ${skin.cost} anillos`}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function selectSkin(skinKey) {
+  gameData.selectedSkin = skinKey;
+  saveGame();
+  updateSkinsList();
+}
+
+function buySkin(skinKey, cost) {
+  if(gameData.totalRings >= cost) {
+    gameData.totalRings -= cost;
+    gameData.unlockedSkins.push(skinKey);
+    gameData.selectedSkin = skinKey;
+    totalRingsEl.textContent = gameData.totalRings;
+    saveGame();
+    updateSkinsList();
+  } else {
+    alert(`Necesitas ${cost - gameData.totalRings} anillos más para desbloquear este personaje`);
+  }
+}
+
+function openShop() {
+  if(!running) return;
+  shopMenuScreen.classList.add('active');
+  document.getElementById('shopRings').textContent = gameData.totalRings;
+}
+
+function closeShop() {
+  shopMenuScreen.classList.remove('active');
+}
+
+function buyPowerup(type, cost) {
+  if(gameData.totalRings >= cost) {  // Cambiar 'rings' por 'gameData.totalRings'
+    gameData.totalRings -= cost;
+    totalRingsEl.textContent = gameData.totalRings;  // Actualizar el display de anillos totales
+    gameData.activePowerups.push(type);
+    
+    if(type === 'speed' || type === 'magnet') {
+      setTimeout(() => {
+        gameData.activePowerups = gameData.activePowerups.filter(p => p !== type);
+        updatePowerupBar();
+      }, type === 'speed' ? 10000 : 15000);
+    }
+    
+    updatePowerupBar();
+    saveGame();  // Guardar los cambios
+    closeShop();
+    createParticles(player.x, player.y, "#fbbf24", 15);
+  } else {
+    alert(`Necesitas ${cost - gameData.totalRings} anillos más para comprar este power-up`);
+  }
+}
+
+function restart(){
+  gameOverScreen.classList.remove('active');
+  shopMenuScreen.classList.remove('active');
+  
+  speed = gameMode === 'hardcore' ? 5 : 4;
+  rings=0; 
+  distance=0; 
+  entities=[]; 
+  running=true;
+  // shownMilestones.clear();
+  earnedMessages = [];
+  particles = [];
+  gameData.activePowerups = [];
+  
+  ringsEl.textContent=0; 
+  distEl.textContent=0;
+  startTime = Date.now();
+  lastSpawnTime = Date.now();
+  
+  minSpawnInterval = gameMode === 'hardcore' ? 900 : 1200;
+  maxSpawnInterval = gameMode === 'hardcore' ? 1600 : 2000;
+  timeLimit = gameMode === 'timed' ? 60 : 0;
+  
+  player.y = 260;
+  player.vy = 0;
+  player.grounded = true;
+  player.canDoubleJump = false;
+  player.hasJumped = false;
+  
+  updatePowerupBar();
+  initSnowflakes();
+  update();
+}
+
+// Aumento de velocidad
+setInterval(()=>{
+  if(!running) return;
+  speed += gameMode === 'hardcore' ? 0.6 : 0.4;
+  minSpawnInterval = Math.max(800, minSpawnInterval - 50);
+  maxSpawnInterval = Math.max(1400, maxSpawnInterval - 80);
+},10000);
+
+// Inicializar
+loadGame();
+generateDailyMissions();
+showMenu();
+</script>
+
+</body>
+</html>
